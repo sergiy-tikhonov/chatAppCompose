@@ -1,25 +1,22 @@
 package com.tikhonov.chatapp.components
-import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import com.tikhonov.chatapp.R
-import androidx.compose.runtime.getValue // <-- WITHOUT THAT IT WOULDN'T WORK
-import androidx.compose.runtime.setValue // <-- WITHOUT THAT IT WOULDN'T WORK
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tikhonov.chatapp.Message
 import com.tikhonov.chatapp.ui.theme.ChatAppTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ChatApp() {
     var user1Message by remember { mutableStateOf("") }
     var user2Message by remember { mutableStateOf("") }
-    var chat: MutableList<String> by remember {
-        mutableStateOf(mutableListOf())
-    }
+    val chat = remember {mutableStateListOf<Message>()}  // <-- mutableStateOf doesn't work
+
     Column() {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -31,14 +28,11 @@ fun ChatApp() {
                 onMessageChanged = {
                     user1Message = it
                 },
-                modifier = Modifier.weight(1.0f),
+                modifier = Modifier.weight(1.0f).padding(16.dp),
                 onMessageAdd = {
-                    chat.add(user1Message)
+                    chat.add(Message(user1Message, true))
                     user1Message = ""
                 }
-            )
-            Spacer(
-                modifier = Modifier.width(16.dp)
             )
             UserArea(
                 userName = stringResource(id = R.string.user2_name),
@@ -47,14 +41,20 @@ fun ChatApp() {
                 onMessageChanged = {
                     user2Message = it
                 },
-                modifier = Modifier.weight(1.0f),
+                modifier = Modifier.weight(1.0f).padding(16.dp),
                 onMessageAdd = {
-                    chat.add(user2Message)
+                    chat.add(Message(user2Message, false))
                     user2Message = ""
                 }
             )
         }
-        ChatArea()
+        Spacer(modifier = Modifier.height(20.dp))
+        ChatArea(
+            chat = chat,
+            onMessageDelete = {
+                    message -> chat.remove(message)
+            }
+        )
     }
 }
 
