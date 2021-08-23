@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="user1_name">George</string>
+    <string name="user2_name">Marta</string>
 </resources>
